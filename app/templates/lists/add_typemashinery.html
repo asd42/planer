@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block app_content %}
+<h1>Новый тип техники</h1>
+<form action="" method="post">
+    {{ form.hidden_tag() }}
+    <a href="{{ url_for('cl') }}">Назад</a>
+    <p>
+        {{ form.typename.label }}<br>
+        {{ form.typename(size=64) }}<br>
+        {% for error in form.typename.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

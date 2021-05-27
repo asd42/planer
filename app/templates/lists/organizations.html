@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block app_content %}
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <h1>Контрагенты</h1>
+    <table border="1">
+        <caption>Таблица контрагентов</caption>
+        <tr>
+            <th>Наименование</th>
+            <th>ИНН</th>
+            <th>КПП</th>
+            <th>e-mail</th>
+        </tr>
+        {% for org in org %}
+            <tr>
+                <td>{{ org.fullname }}</td>
+                <td>{{ org.inn }}</td>
+                <td>{{ org.kpp }}</td>
+                <td>{{ org.email }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <a href="{{ url_for('add_org') }}">Добавить</a>
+{% endblock %}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block app_content %}
+<!-- link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}" -->
+<script language=javascript>
+    var selected_row = null;
+        selected_id = null;
+
+    function select_row(row)
+    {
+      if(selected_row != null) selected_row.className = '';
+      selected_row = row;
+      if(selected_row != null) {
+        selected_row.className = 'selected';
+        selected_id = row.cells[0].innerHTML;
+        document.getElementById("del_id").value = selected_id;
+      }
+    }
+
+</script>
+
+
+<h3 class="sub-header">Типы техники</h3>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Наименование</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for list in list %}
+        <tr onclick='select_row(this)'>
+            <td>{{ list.id }}</td>
+            <td>{{ list.typename }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('add_typemashinery') }}">Добавить</a>
+    <INPUT TYPE=button VALUE=" Показать ID " LANGUAGE="Javascript" onclick="alert(selected_id)">
+
+    <form method="post" action="/lists/common_list/delete_row">
+        <input type="hidden" name="del_id" id="del_id">
+        <button type="submit">Удалить строку</button>
+    </form>
+
+</div>
+
+
+{% endblock %}
