@@ -118,9 +118,13 @@ def mod():
 
 @app.route('/lists/models/add_model', methods=['GET', 'POST'])
 def add_model():
+    types = db.session.query(Typemachinery).all()
+#    types = Typemachinery.query.all()
+    type_list = [(i.id, i.typename) for i in types]
     form1 = Faddmodel()
+    form1.type.choices = type_list
     if form1.validate_on_submit():
-        typem = Modelsmachinery(name=form1.name.data)
+        typem = Modelsmachinery(name=form1.name.data, type_id=form1.type.data)
         db.session.add(typem)
         db.session.commit()
         flash('Тип добавлен')
@@ -152,9 +156,6 @@ def delete_mod():
     print('hello')
     print(row)
     drow = Modelsmachinery.query.get(row)
- #   Work.query.filter_by(id=row).delete()
- #   print(stype)
-
     db.session.delete(drow)
     db.session.commit()
     return redirect(url_for('mod'))
@@ -166,9 +167,6 @@ def delete_dns():
     print('hello')
     print(row)
     drow = Divisions.query.get(row)
- #   Work.query.filter_by(id=row).delete()
- #   print(stype)
-
     db.session.delete(drow)
     db.session.commit()
     return redirect(url_for('l_dns'))

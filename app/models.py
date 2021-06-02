@@ -104,7 +104,7 @@ class Typefulfillment(db.Model):  # тип выполнения
 class Typemachinery(db.Model):  # тип техники
     id = db.Column(db.Integer, primary_key=True)
     typename = db.Column(db.String(64), index=True, unique=True)
-
+    models = db.relationship('Modelsmachinery', backref='model_type', lazy='dynamic')
     def __repr__(self):
         return '<TypeMachinery {}>'.format(self.typename)
 

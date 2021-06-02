@@ -49,7 +49,8 @@ class Faddtypemashinery(FlaskForm):
 
 class Faddmodel(FlaskForm):
     name = StringField('Наименование', validators=[DataRequired()])
-    type = SelectField('Типы техники', choices=[('1','один'),('2','два')])
+#    type = SelectField('Типы техники', choices=[('1','один'),('2','два')])
+    type = SelectField('Типы техники', coerce=int)
     submit = SubmitField('Записать')
 
     def validate_name(self, name):
