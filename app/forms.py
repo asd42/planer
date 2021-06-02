@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
-from app.models import Organization, Typemachinery, Modelsmachinery
+from app.models import Organization, Typemachinery, Modelsmachinery, Divisions
 
 
 class LoginForm(FlaskForm):
@@ -56,3 +56,20 @@ class Faddmodel(FlaskForm):
         name = Modelsmachinery.query.filter_by(name=name.data).first()
         if name is not None:
             raise ValidationError('Please use a different typename.')
+
+
+class Fadddivision(FlaskForm):
+    name = StringField('Наименование')
+    abbreviation = StringField('Аббревиатура', validators=[DataRequired()])
+    email = StringField('Email', validators=[Email()])
+    submit = SubmitField('Записать')
+
+    def validate_name(self, name):
+        name = Divisions.query.filter_by(name=name.data).first()
+        if name is not None:
+            raise ValidationError('Please use a different name.')
+
+    def validate_abbreviation(self, abbreviation):
+        abbreviation = Divisions.query.filter_by(abbreviation=abbreviation.data).first()
+        if abbreviation is not None:
+            raise ValidationError('Please use a different abbreviation.')

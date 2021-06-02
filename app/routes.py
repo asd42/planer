@@ -1,9 +1,9 @@
 from app import app
 from app import db
 from flask import render_template, flash, redirect, url_for, request
-from app.forms import LoginForm, Faddorganization, Faddtypemashinery, Faddmodel
+from app.forms import LoginForm, Faddorganization, Faddtypemashinery, Faddmodel, Fadddivision
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Organization, Typemachinery, Modelsmachinery
+from app.models import User, Organization, Typemachinery, Modelsmachinery, Divisions
 from werkzeug.urls import url_parse
 
 
@@ -84,6 +84,12 @@ def l_org():
     return render_template('lists/organizations.html', title='Контрагенты', org=org)
 
 
+@app.route('/lists/divisions', methods=['GET', 'POST'])
+def l_dns():
+    dns = Divisions.query.all()
+    return render_template('lists/divisions.html', title='Участки', dns=dns)
+
+
 @app.route('/lists/common_list', methods=['GET', 'POST'])
 def cl():
     c_list = Typemachinery.query.all()
@@ -121,7 +127,23 @@ def add_model():
         return redirect(url_for('mod'))
     else:
         flash('Контрагент не добавлен')
-    return render_template('lists/add_model.html', title='Новый тип', form=form1, type=Typemachinery.query.all())
+    return render_template('lists/add_row.html', title='Новый тип', form=form1, type=Typemachinery.query.all())
+
+
+@app.route('/lists/divisions/add_division', methods=['GET', 'POST'])
+def add_dns():
+    form1 = Fadddivision()
+    if form1.validate_on_submit():
+        dns = Divisions(name=form1.name.data,
+                              abbreviation=form1.abbreviation.data,
+                              email=form1.email.data)
+        db.session.add(dns)
+        db.session.commit()
+        flash('Участок добавлен')
+        return redirect(url_for('l_dns'))
+    else:
+        flash('Участок не добавлен')
+    return render_template('lists/add_row.html', title='Новый участок', form=form1, dns=Divisions.query.all())
 
 
 @app.route('/lists/models/delete_row', methods=['POST'])
@@ -136,3 +158,17 @@ def delete_mod():
     db.session.delete(drow)
     db.session.commit()
     return redirect(url_for('mod'))
+
+
+@app.route('/lists/divisions/delete_row', methods=['GET', 'POST'])
+def delete_dns():
+    row = request.form['del_id']
+    print('hello')
+    print(row)
+    drow = Divisions.query.get(row)
+ #   Work.query.filter_by(id=row).delete()
+ #   print(stype)
+
+    db.session.delete(drow)
+    db.session.commit()
+    return redirect(url_for('l_dns'))

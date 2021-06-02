@@ -118,7 +118,7 @@ class Modelsmachinery(db.Model):  # модель техники
         return '<ModelsMachinery {}>'.format(self.name)
 
 
-class Machinery(db.Model):  # модель техники
+class Machinery(db.Model):  # конкретная единица техники
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True, unique=True)
     model_id = db.Column(db.Integer, db.ForeignKey('modelsmachinery.id'), index=True)
@@ -187,7 +187,7 @@ class Roadstructure(db.Model):
     lifting_capacity = db.Column(db.Integer, index=True)  # грузоподъемность
 
 
-class Roadsincontract(db.Model):
+class Roadsincontract(db.Model):  # привязка дороги к контракту
     id = db.Column(db.Integer, primary_key=True)
     contract = db.Column(db.Integer, db.ForeignKey('contract.id'))
     road = db.Column(db.Integer, db.ForeignKey('roads.id'))
@@ -195,7 +195,7 @@ class Roadsincontract(db.Model):
     end_address = db.Column(db.Integer, index=True)  # метры от км 0+000
 
 
-class Unitrates(db.Model):
+class Unitrates(db.Model):  # единичные расценки
     id = db.Column(db.Integer, primary_key=True)
     contract = db.Column(db.Integer, db.ForeignKey('contract.id'))
     job_title = db.Column(db.String(256), index=True)

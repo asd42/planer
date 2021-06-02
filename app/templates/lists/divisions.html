@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+
+{% block app_content %}
+    <script language=javascript> /* Подсвечивание выделенной строки */
+        var selected_row = null;
+            selected_id = null;
+
+        function select_row(row)
+        {
+          if(selected_row != null) selected_row.className = '';
+          selected_row = row;
+          if(selected_row != null) {
+            selected_row.className = 'selected';
+            selected_id = row.cells[0].innerHTML;
+            document.getElementById("del_id").value = selected_id;
+            document.getElementById("del_button").hidden = false;
+          }
+        }
+    </script>
+
+    <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+    <h1>Divisions</h1>
+    <table border="1">
+        <caption>Divisions table</caption>
+        <tr>
+            <th>id</th>
+            <th>Наименование</th>
+            <th>Аббревиатура</th>
+            <th>e-mail</th>
+        </tr>
+        {% for dns in dns %}
+            <tr onclick='select_row(this)'>
+                <td>{{ dns.id }}</td>
+                <td>{{ dns.name }}</td>
+                <td>{{ dns.abbreviation }}</td>
+                <td>{{ dns.email }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <form method="post" action="/lists/divisions/delete_row">
+        <input type="button" value="Добавить участок" onClick='location.href="{{ url_for('add_dns') }}"'>
+        <input type="hidden" name="del_id" id="del_id">
+        <button id="del_button" type="submit" hidden="true">Удалить строку</button>
+    </form>
+
+{% endblock %}
