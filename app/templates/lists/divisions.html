@@ -2,6 +2,7 @@
 {% extends "base.html" %}
 
 {% block app_content %}
+<script src="/static/scripts/jquery-3.6.0.js"></script>
     <script language=javascript> /* Подсвечивание выделенной строки */
         var selected_row = null;
             selected_id = null;
@@ -21,6 +22,8 @@
 
     <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
     <h1>Divisions</h1>
+    <input class="form-control" id="myInput" type="text" placeholder="Поиск..">
+    <br>
     <table border="1">
         <caption>Divisions table</caption>
         <tr>
@@ -29,6 +32,7 @@
             <th>Аббревиатура</th>
             <th>e-mail</th>
         </tr>
+        <tbody id="myTable">
         {% for dns in dns %}
             <tr onclick='select_row(this)'>
                 <td>{{ dns.id }}</td>
@@ -37,11 +41,22 @@
                 <td>{{ dns.email }}</td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
+    <br>
     <form method="post" action="/lists/divisions/delete_row">
         <input type="button" value="Добавить участок" onClick='location.href="{{ url_for('add_dns') }}"'>
         <input type="hidden" name="del_id" id="del_id">
         <button id="del_button" type="submit" hidden="true">Удалить строку</button>
     </form>
-
+    <script>
+    $(document).ready(function(){
+      $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function() {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+    </script>
 {% endblock %}

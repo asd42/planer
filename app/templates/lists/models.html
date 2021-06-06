@@ -3,7 +3,7 @@
 
 {% block app_content %}
 <!-- link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}" -->
-
+<script src="/static/scripts/jquery-3.6.0.js"></script>
 <script language=javascript>
     var selected_row = null;
         selected_id = null;
@@ -15,24 +15,27 @@
         selected_row.className = 'selected';
         selected_id = row.cells[0].innerHTML;
         document.getElementById("del_id").value = selected_id;
-        document.getElementById("del_button").hidden = false;
+        document.getElementById("del_button").disabled = false;
       }
     }
 </script>
-
 <style>.selected { background-color:#D3D3D3; }</style>
+
+<style>th {cursor: pointer;}</style>
 
 <h3 class="sub-header">Модели техники</h3>
 <div class="table-responsive">
-    <table class="table table-striped table-hover">
+  <input class="form-control" id="myInput" type="text" placeholder="Поиск.." onkeyup="hide()">
+  <br>
+    <table class="table table-hover">
         <thead>
         <tr>
-            <th>id</th>
-            <th>Наименование</th>
-            <th>Тип</th>
+            <th onclick="sortTable(0)">id</th>
+            <th onclick="sortTable(1)">Наименование</th>
+            <th onclick="sortTable(2)">Тип</th>
         </tr>
         </thead>
-        <tbody>
+        <tbody id="myTable">
         {% for list in list %}
         <tr onclick='select_row(this)'>
             <td>{{ list.id }}</td>
@@ -43,17 +46,96 @@
         </tbody>
     </table>
 
-    <!--
+
     <INPUT TYPE=button VALUE=" Показать ID " LANGUAGE="Javascript" onclick="alert(selected_id)">
-    --!>
+
 
     <form method="post" action="/lists/models/delete_row">
         <input type="button" value="Добавить модель" onClick='location.href="{{ url_for('add_model') }}"'>
         <input type="hidden" name="del_id" id="del_id">
-        <button type="submit" hidden="true" id="del_button">Удалить строку</button>
+        <button type="submit" disabled="true" id="del_button">Удалить строку</button>
     </form>
 
 </div>
 
+<!--    Скрипты поисковой строки    --!>
+<script language=javascript>
+    function hide()
+        {
+        document.getElementById("del_button").disabled = true;
+        selected_id = null;
+        selected_row = null;
+        }
+</script>
+
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $('#myTable tr').removeClass('selected');
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+
+<!--    Скрипт сортировки при нажатии на заголовок    --!>
+<script>
+function sortTable(n) {
+  var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+  table = document.getElementById("myTable");
+  switching = true;
+  //Set the sorting direction to ascending:
+  dir = "asc";
+  /*Make a loop that will continue until
+  no switching has been done:*/
+  while (switching) {
+    //start by saying: no switching is done:
+    switching = false;
+    rows = table.rows;
+    /*Loop through all table rows (except the
+    first, which contains table headers):*/
+    for (i = 0; i < (rows.length - 1); i++) {
+      //start by saying there should be no switching:
+      shouldSwitch = false;
+      /*Get the two elements you want to compare,
+      one from current row and one from the next:*/
+      x = rows[i].getElementsByTagName("TD")[n];
+      y = rows[i + 1].getElementsByTagName("TD")[n];
+      /*check if the two rows should switch place,
+      based on the direction, asc or desc:*/
+      if (dir == "asc") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch= true;
+          break;
+        }
+      } else if (dir == "desc") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          //if so, mark as a switch and break the loop:
+          shouldSwitch = true;
+          break;
+        }
+      }
+    }
+    if (shouldSwitch) {
+      /*If a switch has been marked, make the switch
+      and mark that a switch has been done:*/
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true;
+      //Each time a switch is done, increase this count by 1:
+      switchcount ++;
+    } else {
+      /*If no switching has been done AND the direction is "asc",
+      set the direction to "desc" and run the while loop again.*/
+      if (switchcount == 0 && dir == "asc") {
+        dir = "desc";
+        switching = true;
+      }
+    }
+  }
+}
+</script>
 
 {% endblock %}
