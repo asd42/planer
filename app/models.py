@@ -42,6 +42,7 @@ class Organization(db.Model):
     accounting = db.Column(db.Boolean, index=True)
     staff = db.relationship('Staff', backref='organization', lazy='dynamic')
     divisions = db.relationship('Divisions', backref='organization', lazy='dynamic')
+   # contracts = db.relationship('Contract', backref='contracts', lazy='dynamic')
 
     def __repr__(self):
         return '<Organization {}>'.format(self.fullname)

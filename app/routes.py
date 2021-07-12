@@ -3,7 +3,7 @@ from app import db
 from flask import render_template, flash, redirect, url_for, request
 from app.forms import LoginForm, Faddorganization, Faddtypemashinery, Faddmodel, Fadddivision
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Organization, Typemachinery, Modelsmachinery, Divisions
+from app.models import User, Organization, Typemachinery, Modelsmachinery, Divisions, Contract
 from werkzeug.urls import url_parse
 
 
@@ -127,11 +127,11 @@ def add_model():
         typem = Modelsmachinery(name=form1.name.data, type_id=form1.type.data)
         db.session.add(typem)
         db.session.commit()
-        flash('Тип добавлен')
+        flash('Модель добавлена')
         return redirect(url_for('mod'))
     else:
-        flash('Контрагент не добавлен')
-    return render_template('lists/add_row.html', title='Новый тип', form=form1, type=Typemachinery.query.all())
+        flash('Модель не добавлена')
+    return render_template('lists/add_row.html', title='Новая модель', form=form1, type=Typemachinery.query.all())
 
 
 @app.route('/lists/divisions/add_division', methods=['GET', 'POST'])
@@ -170,3 +170,10 @@ def delete_dns():
     db.session.delete(drow)
     db.session.commit()
     return redirect(url_for('l_dns'))
+
+
+@app.route('/lists/contracts', methods=['GET', 'POST'])
+def contracts():
+    c_list = Contract.query.all()
+    org_list = Organization.query.all()
+    return render_template('lists/contracts.html', title='Контракты', list=c_list, org_list=org_list)
