@@ -1,7 +1,7 @@
 from app import app
 from app import db
 from flask import render_template, flash, redirect, url_for, request
-from app.forms import LoginForm, Faddorganization, Faddtypemashinery, Faddmodel, Fadddivision
+from app.forms import LoginForm, Faddorganization, Faddtypemashinery, Faddmodel, Fadddivision, Faddcontract
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Organization, Typemachinery, Modelsmachinery, Divisions, Contract
 from werkzeug.urls import url_parse
@@ -41,7 +41,6 @@ def logout():
 @app.route('/add_organization', methods=['GET', 'POST'])
 def add_org():
     form = Faddorganization()
-    flash('Cjj,otybt')
     if form.validate_on_submit():
         org = Organization(fullname=form.fullname.data,
                            name=form.name.data,
@@ -59,7 +58,7 @@ def add_org():
         db.session.commit()
         flash('Контрагент добавлен')
         return redirect(url_for('l_org'))
-    elif request.method == 'GET':
+    else:
         flash('Контрагент не добавлен')
     return render_template('add_organizations.html', title='Новый контрагент', form=form)
 
@@ -177,3 +176,26 @@ def contracts():
     c_list = Contract.query.all()
     org_list = Organization.query.all()
     return render_template('lists/contracts.html', title='Контракты', list=c_list, org_list=org_list)
+
+
+@app.route('/lists/contracts/add_contract', methods=['GET', 'POST'])
+def add_contract():
+    contractors = db.session.query(Organization).all()
+#    types = Typemachinery.query.all()
+    cont_list = [(i.id, i.name) for i in contractors]
+    addform = Faddcontract()
+    addform.contractor.choices = cont_list
+    if addform.validate_on_submit():
+        contract = Contract(date=addform.date.data,
+                            number=addform.number.data,
+                            contractor=addform.contractor.data,
+                            name=addform.name.data,
+                            price=addform.price.data,
+                            end_date=addform.end_date.data)
+        db.session.add(contract)
+        db.session.commit()
+        flash('Контракт добавлен')
+        return redirect(url_for('contracts'))
+    else:
+        flash('Контракт не добавлен')
+    return render_template('lists/add_row.html', title='Новый контракт', form=addform)

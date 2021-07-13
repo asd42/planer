@@ -31,8 +31,8 @@
         <thead>
         <tr>
             <th onclick="sortTable(0)">id</th>
-            <th onclick="sortTable(1)">Дата</th>
-            <th onclick="sortTable(2)">Номер</th>
+            <th onclick="sortTable(1)">Номер</th>
+            <th onclick="sortTable(2)">Дата</th>
             <th onclick="sortTable(3)">Контрагент</th>
             <th onclick="sortTable(4)">Предмет</th>
             <th onclick="sortTable(5)">Цена контракта</th>
@@ -50,7 +50,6 @@
                     <td>{{ org_list.name }}</td>
                 {% endif %}
             {% endfor %}
-            <td>{{ list.contractor.name }}</td>
             <td>{{ list.name }}</td>
             <td>{{ list.price }}</td>
             <td>{{ list.end_date }}</td>
@@ -64,7 +63,7 @@
 
 
     <form method="post" action="/lists/models/delete_row">
-        <input type="button" value="Новый контракт" onClick='location.href="{{ url_for('add_model') }}"'>
+        <input type="button" value="Новый контракт" onClick='location.href="{{ url_for('add_contract') }}"'>
         <input type="hidden" name="del_id" id="del_id">
         <button type="submit" disabled="true" id="del_button">Удалить строку</button>
     </form>

@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField, DateField, FloatField
 from wtforms.validators import DataRequired, Email, ValidationError, EqualTo
 from app.models import Organization, Typemachinery, Modelsmachinery, Divisions
 
@@ -74,3 +74,13 @@ class Fadddivision(FlaskForm):
         abbreviation = Divisions.query.filter_by(abbreviation=abbreviation.data).first()
         if abbreviation is not None:
             raise ValidationError('Please use a different abbreviation.')
+
+
+class Faddcontract(FlaskForm):
+    date = DateField('Дата')
+    number = StringField('Номер')
+    contractor = SelectField('Контрагент', coerce=int)
+    name = StringField('Предмет контракта')
+    price = FloatField('Цена контракта')
+    end_date = DateField('Срок выполнения работ')
+    submit = SubmitField('Записать')
