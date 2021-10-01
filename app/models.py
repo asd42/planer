@@ -11,7 +11,7 @@ def load_user(id):
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
-#    email = db.Column(db.String(120), index=True, unique=True)
+    #    email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     staff = db.relationship('Staff', backref='user', lazy='dynamic')
 
@@ -42,7 +42,8 @@ class Organization(db.Model):
     accounting = db.Column(db.Boolean, index=True)
     staff = db.relationship('Staff', backref='organization', lazy='dynamic')
     divisions = db.relationship('Divisions', backref='organization', lazy='dynamic')
-   # contracts = db.relationship('Contract', backref='contracts', lazy='dynamic')
+
+    # contracts = db.relationship('Contract', backref='contracts', lazy='dynamic')
 
     def __repr__(self):
         return '<Organization {}>'.format(self.fullname)
@@ -106,6 +107,7 @@ class Typemachinery(db.Model):  # тип техники
     id = db.Column(db.Integer, primary_key=True)
     typename = db.Column(db.String(64), index=True, unique=True)
     models = db.relationship('Modelsmachinery', backref='model_type', lazy='dynamic')
+
     def __repr__(self):
         return '<TypeMachinery {}>'.format(self.typename)
 
@@ -188,25 +190,38 @@ class Roadstructure(db.Model):
     lifting_capacity = db.Column(db.Integer, index=True)  # грузоподъемность
 
 
-class Roadsincontract(db.Model):  # привязка дороги к контракту
+class RoadsInContract(db.Model):  # привязка дороги к контракту
     id = db.Column(db.Integer, primary_key=True)
     contract = db.Column(db.Integer, db.ForeignKey('contract.id'))
     road = db.Column(db.Integer, db.ForeignKey('roads.id'))
     start_address = db.Column(db.Integer, index=True)  # метры от км 0+000
     end_address = db.Column(db.Integer, index=True)  # метры от км 0+000
+    # zone = db.Column(db.SmallInteger, index=True)  # зона 1 или 2
+    # category = db.Column(db.String(16), index=True)
+    # resp_div = db.Column(db.Integer, db.ForeignKey('divisions.id')) # ответственный участок
 
 
-class Unitrates(db.Model):  # единичные расценки
+class UnitRates(db.Model):  # единичные расценки
     id = db.Column(db.Integer, primary_key=True)
     contract = db.Column(db.Integer, db.ForeignKey('contract.id'))
     job_title = db.Column(db.String(256), index=True)
     price = db.Column(db.Float)
     zone = db.Column(db.SmallInteger, index=True)  # зона 1 или 2
+    # group = db.Column(db.String(64), index=True)
+    # category = db.Column(db.String(16), index=True)
     season_winter = db.Column(db.Boolean, index=True)  # зимняя работа
-    tag = db.Column(db.String(32), index=True)  # группа работ (знаки, мосты, и т.д.)
+    start_date = db.Column(db.Date, index=True)
+    end_date = db.Column(db.Date, index=True)
+    tag = db.Column(db.String(64), index=True)  # группа работ (знаки, мосты, и т.д.)
 
 
-class Planeprice(db.Model):
+class UnitRatesOnRoad(db.Model):  # единичные расценки применяемые на участке дороги
+    id = db.Column(db.Integer, primary_key=True)
+    roadsincontract = db.Column(db.Integer, db.ForeignKey('roadsincontract.id'))
+    unitrates = db.Column(db.Integer, db.ForeignKey('unitrates.id'))
+
+
+class PlanePrice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     start_date = db.Column(db.Date, index=True)
     end_date = db.Column(db.Date, index=True)
