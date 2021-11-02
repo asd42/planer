@@ -1,7 +1,7 @@
 from app import app
 from app import db
 from flask import render_template, flash, redirect, url_for, request
-from app.forms import LoginForm, Faddorganization, Faddtypemashinery, Faddmodel, Fadddivision, Faddcontract
+from app.forms import LoginForm, Faddorganization, Faddtypemashinery, Faddmodel, Fadddivision, Faddcontract, Feditmodel
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, Organization, Typemachinery, Modelsmachinery, Divisions, Contract
 from werkzeug.urls import url_parse
@@ -98,11 +98,10 @@ def cl():
 @app.route('/lists/common_list/delete_row', methods=['POST'])
 def delete_row():
     row = request.form['del_id']
-    print('hello')
     print(row)
     drow = Typemachinery.query.get(row)
- #   Work.query.filter_by(id=row).delete()
- #   print(stype)
+    #   Work.query.filter_by(id=row).delete()
+    #   print(stype)
 
     db.session.delete(drow)
     db.session.commit()
@@ -118,7 +117,7 @@ def mod():
 @app.route('/lists/models/add_model', methods=['GET', 'POST'])
 def add_model():
     types = db.session.query(Typemachinery).all()
-#    types = Typemachinery.query.all()
+    #    types = Typemachinery.query.all()
     type_list = [(i.id, i.typename) for i in types]
     form1 = Faddmodel()
     form1.type.choices = type_list
@@ -133,13 +132,40 @@ def add_model():
     return render_template('lists/add_row.html', title='Новая модель', form=form1, type=Typemachinery.query.all())
 
 
+@app.route('/lists/models/<int:e_id>/edit_row', methods=['GET', 'POST'])
+def edit_mod(e_id):
+    # row = request.form[e_id]
+    erow = Modelsmachinery.query.get(e_id)
+    types = db.session.query(Typemachinery).all()
+    type_list = [(i.id, i.typename) for i in types]
+    form1 = Feditmodel()
+    form1.type.choices = type_list
+    if form1.name.data is None:
+        form1.name.data = erow.name
+    if form1.type.data is None:
+        form1.type.data = erow.type_id
+    if form1.validate_on_submit():
+        erow.name = form1.name.data
+        erow.type_id = form1.type.data
+        # erow = Modelsmachinery(name=form1.name.data, type_id=form1.type.data)
+        # db.session.add(erow)
+        db.session.commit()
+        flash('Модель изменена')
+        print(erow.name)
+        return redirect(url_for('mod'))
+    else:
+        flash('Модель не изменена')
+
+    return render_template('lists/add_row.html', title='Изменить модель', form=form1, type=Typemachinery.query.all())
+
+
 @app.route('/lists/divisions/add_division', methods=['GET', 'POST'])
 def add_dns():
     form1 = Fadddivision()
     if form1.validate_on_submit():
         dns = Divisions(name=form1.name.data,
-                              abbreviation=form1.abbreviation.data,
-                              email=form1.email.data)
+                        abbreviation=form1.abbreviation.data,
+                        email=form1.email.data)
         db.session.add(dns)
         db.session.commit()
         flash('Участок добавлен')
@@ -152,7 +178,6 @@ def add_dns():
 @app.route('/lists/models/delete_row', methods=['POST'])
 def delete_mod():
     row = request.form['del_id']
-    print('hello')
     print(row)
     drow = Modelsmachinery.query.get(row)
     db.session.delete(drow)
@@ -163,7 +188,6 @@ def delete_mod():
 @app.route('/lists/divisions/delete_row', methods=['GET', 'POST'])
 def delete_dns():
     row = request.form['del_id']
-    print('hello')
     print(row)
     drow = Divisions.query.get(row)
     db.session.delete(drow)
@@ -181,7 +205,7 @@ def contracts():
 @app.route('/lists/contracts/add_contract', methods=['GET', 'POST'])
 def add_contract():
     contractors = db.session.query(Organization).all()
-#    types = Typemachinery.query.all()
+    #    types = Typemachinery.query.all()
     cont_list = [(i.id, i.name) for i in contractors]
     addform = Faddcontract()
     addform.contractor.choices = cont_list

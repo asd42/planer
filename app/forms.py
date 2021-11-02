@@ -56,7 +56,19 @@ class Faddmodel(FlaskForm):
     def validate_name(self, name):
         name = Modelsmachinery.query.filter_by(name=name.data).first()
         if name is not None:
-            raise ValidationError('Please use a different typename.')
+            raise ValidationError('Please use a different name.')
+
+
+class Feditmodel(FlaskForm):
+    name = StringField('Наименование', validators=[DataRequired()])
+#    type = SelectField('Типы техники', choices=[('1','один'),('2','два')])
+    type = SelectField('Типы техники', coerce=int)
+    submit = SubmitField('Записать')
+
+#   def validate_name(self, name):
+#       name = Modelsmachinery.query.filter_by(name=name.data).first()
+#       if name is not None:
+#           raise ValidationError('Please use a different name.')
 
 
 class Fadddivision(FlaskForm):

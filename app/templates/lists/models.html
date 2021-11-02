@@ -15,7 +15,9 @@
         selected_row.className = 'selected';
         selected_id = row.cells[0].innerHTML;
         document.getElementById("del_id").value = selected_id;
+        document.getElementById("edit_id").value = selected_id;
         document.getElementById("del_button").disabled = false;
+        document.getElementById("edit_button").disabled = false;
       }
     }
 </script>
@@ -33,6 +35,7 @@
             <th onclick="sortTable(0)">id</th>
             <th onclick="sortTable(1)">Наименование</th>
             <th onclick="sortTable(2)">Тип</th>
+            <th>Действия</th>
         </tr>
         </thead>
         <tbody id="myTable">
@@ -41,21 +44,22 @@
             <td>{{ list.id }}</td>
             <td>{{ list.name }}</td>
             <td>{{ list.model_type.typename }}</td>
+            <td><a href="{{url_for('edit_mod', e_id = list.id )}}">Изменить</a></td>
         </tr>
         {% endfor %}
         </tbody>
     </table>
 
-
     <INPUT TYPE=button VALUE=" Показать ID " LANGUAGE="Javascript" onclick="alert(selected_id)">
 
+    <input type="button" value="Добавить модель" onClick='location.href="{{ url_for('add_model') }}"'>
+    <input type="hidden" name="edit_id" id="edit_id">
+    <input type="button" value="Редактировать" id=edit_button onClick = 'location.href="{{ url_for('edit_mod', e_id = 15) }}"'> <!--    не работает    --!>
 
-    <form method="post" action="/lists/models/delete_row">
-        <input type="button" value="Добавить модель" onClick='location.href="{{ url_for('add_model') }}"'>
+    <form method="post" action="/lists/models/delete_row">  <!-- форма удаления строки --!>
         <input type="hidden" name="del_id" id="del_id">
         <button type="submit" disabled="true" id="del_button">Удалить строку</button>
     </form>
-
 </div>
 
 <!--    Скрипты поисковой строки    --!>
@@ -63,6 +67,7 @@
     function hide()
         {
         document.getElementById("del_button").disabled = true;
+        document.getElementById("edit_button").disabled = true;
         selected_id = null;
         selected_row = null;
         }

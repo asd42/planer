@@ -203,7 +203,7 @@ class RoadsInContract(db.Model):  # привязка дороги к контр�
 
 class UnitRates(db.Model):  # единичные расценки
     id = db.Column(db.Integer, primary_key=True)
-    contract = db.Column(db.Integer, db.ForeignKey('contract.id'))
+    contract = db.Column(db.Integer, db.ForeignKey('contract.id'))  # возможно надо убрать, т.к. есть в UnitRatesOnRoad
     job_title = db.Column(db.String(256), index=True)
     price = db.Column(db.Float)
     zone = db.Column(db.SmallInteger, index=True)  # зона 1 или 2
